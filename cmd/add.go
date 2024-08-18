@@ -4,13 +4,14 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
 )
 
 var addCmd = &cobra.Command{
-	Use:   "add",
+	Use:   "add \"[Task]\"",
 	Short: "Add a new task",
 	Long: `Adds a new task list to the todo repository. 
   For example: donna add "Do something" adds a new task with the description "Do something"`,
@@ -32,6 +33,8 @@ func addTask(desc string) {
 	updatedTasks := appendNewTask(desc)
 
 	writeTasksToCsv(updatedTasks)
+
+	fmt.Printf("Successfully added new task '%s'", desc)
 }
 
 func appendNewTask(description string) []Task {
