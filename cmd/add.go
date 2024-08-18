@@ -39,7 +39,7 @@ func generateCurrDateString() string {
 }
 
 func appendNewTask(description string) []Task {
-	tasks := fetchTasks()
+	tasks := fetchTasksAsList()
 
 	var newId int
 	if len(tasks) == 0 {

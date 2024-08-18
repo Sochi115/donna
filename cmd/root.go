@@ -36,7 +36,7 @@ func init() {
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
-func fetchTasks() []Task {
+func fetchTasksAsList() []Task {
 	file, err := os.Open(csvPath)
 	if err != nil {
 		panic(err)
@@ -69,6 +69,41 @@ func fetchTasks() []Task {
 	}
 
 	return tasks
+}
+
+func fetchTasksAsMap() map[int]Task {
+	file, err := os.Open(csvPath)
+	if err != nil {
+		panic(err)
+	}
+
+	defer file.Close()
+
+	m := make(map[int]Task)
+
+	reader := csv.NewReader(file)
+	reader.FieldsPerRecord = -1
+	data, err := reader.ReadAll()
+	if err != nil {
+		panic(err)
+	}
+
+	for _, row := range data[1:] {
+
+		id, err := strconv.Atoi(row[0])
+		if err != nil {
+			panic(err)
+		}
+
+		completed, err := strconv.ParseBool(row[3])
+		if err != nil {
+			panic(err)
+		}
+
+		m[id] = Task{id, row[1], row[2], completed}
+	}
+
+	return m
 }
 
 func writeTasksToCsv(tasks []Task) {
