@@ -14,6 +14,7 @@ import (
 var doneCmd = &cobra.Command{
 	Use:   "done [ID]",
 	Short: "Sets task with ID 'completed' status to True",
+	Args:  cobra.ExactArgs(1),
 	Long: `Sets the 'Completed' status of the task with the given ID to True.
   Note: This command does NOT delete the task`,
 

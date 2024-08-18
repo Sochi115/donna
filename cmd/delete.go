@@ -14,6 +14,7 @@ import (
 var deleteCmd = &cobra.Command{
 	Use:   "delete [ID]",
 	Short: "Deletes task",
+	Args:  cobra.ExactArgs(1),
 	Long: `Deletes task with the given [ID].
   Deleted tasks can NOT be recovered`,
 	Run: func(cmd *cobra.Command, args []string) {
