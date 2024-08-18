@@ -42,6 +42,7 @@ func setTaskComplete(id int) {
 
 	if !ok {
 		fmt.Printf("Task with ID %d does not exist! Run `donna list` to view all tasks", id)
+		return
 	}
 
 	completedTask.Done = true
