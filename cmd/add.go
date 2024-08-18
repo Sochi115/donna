@@ -4,9 +4,7 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
 	"os"
-	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -21,9 +19,7 @@ var addCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(0)
 		} else {
-			updatedTasks := appendNewTask(args[0])
-
-			writeTasksToCsv(updatedTasks)
+			addTask(args[0])
 		}
 	},
 }
@@ -32,10 +28,10 @@ func init() {
 	rootCmd.AddCommand(addCmd)
 }
 
-func generateCurrDateString() string {
-	currTime := time.Now()
+func addTask(desc string) {
+	updatedTasks := appendNewTask(desc)
 
-	return fmt.Sprintf("%d-%s-%d", currTime.Day(), currTime.Month().String(), currTime.Year())
+	writeTasksToCsv(updatedTasks)
 }
 
 func appendNewTask(description string) []Task {

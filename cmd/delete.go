@@ -6,17 +6,16 @@ package cmd
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/spf13/cobra"
 )
 
-// doneCmd represents the done command
-var doneCmd = &cobra.Command{
-	Use:   "done [ID]",
-	Short: "Sets task with ID 'completed' status to True",
-	Long: `Sets the 'Completed' status of the task with the given ID to True.
-  Note: This command does NOT delete the task`,
-
+var deleteCmd = &cobra.Command{
+	Use:   "delete [ID]",
+	Short: "Deletes task",
+	Long: `Deletes task with the given [ID].
+  Deleted tasks can NOT be recovered`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			cmd.Help()
@@ -27,28 +26,26 @@ var doneCmd = &cobra.Command{
 				cmd.Help()
 				return
 			}
-			setTaskComplete(id)
+			deleteTask(id)
 		}
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(doneCmd)
+	rootCmd.AddCommand(deleteCmd)
 }
 
-func setTaskComplete(id int) {
+func deleteTask(id int) {
 	tasksMap := fetchTasksAsMap()
 
-	completedTask, ok := tasksMap[id]
+	_, ok := tasksMap[id]
 
 	if !ok {
 		fmt.Printf("Task with ID %d does not exist!\nRun `donna list` to view all tasks", id)
 		return
 	}
 
-	completedTask.Done = true
-
-	tasksMap[id] = completedTask
+	delete(tasksMap, id)
 
 	tasksList := make([]Task, 0, len(tasksMap))
 
@@ -58,5 +55,11 @@ func setTaskComplete(id int) {
 
 	writeTasksToCsv(tasksList)
 
-	fmt.Printf("Successfully set task %d as done", id)
+	fmt.Printf("Successfully deleted task %d", id)
+}
+
+func generateCurrDateString() string {
+	currTime := time.Now()
+
+	return fmt.Sprintf("%d-%s-%d", currTime.Day(), currTime.Month().String(), currTime.Year())
 }
