@@ -10,6 +10,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	all         bool
+	completed   bool
+	incompleted bool
+	stats       bool
+
+	completedTasks   []Task
+	incompletedTasks []Task
+)
+
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
@@ -22,22 +32,20 @@ var listCmd = &cobra.Command{
 			cmd.Help()
 		} else {
 			tasks := fetchTasksAsList()
+			processTasks(tasks)
 
-			allVal, _ := cmd.Flags().GetBool("all")
-			if allVal {
+			if all {
 				createTable(tasks)
 				return
 			}
 
-			completedVal, _ := cmd.Flags().GetBool("completed")
-			if completedVal {
-				createTable(filterCompletedTasks(tasks))
+			if completed {
+				createTable(completedTasks)
 				return
 			}
 
-			incompletedVal, _ := cmd.Flags().GetBool("incompleted")
-			if incompletedVal {
-				createTable(filterIncompletedTasks(tasks))
+			if incompleted {
+				createTable(incompletedTasks)
 				return
 			}
 
@@ -45,13 +53,6 @@ var listCmd = &cobra.Command{
 		}
 	},
 }
-
-var (
-	all         bool
-	completed   bool
-	incompleted bool
-	stats       bool
-)
 
 func init() {
 	rootCmd.AddCommand(listCmd)
@@ -85,26 +86,12 @@ func createTable(tasks []Task) {
 	t.Render()
 }
 
-func filterCompletedTasks(tasks []Task) []Task {
-	var completed []Task
-
+func processTasks(tasks []Task) {
 	for _, task := range tasks {
 		if task.Done {
-			completed = append(completed, task)
+			completedTasks = append(completedTasks, task)
+		} else {
+			incompletedTasks = append(incompletedTasks, task)
 		}
 	}
-
-	return completed
-}
-
-func filterIncompletedTasks(tasks []Task) []Task {
-	var incompleted []Task
-
-	for _, task := range tasks {
-		if !task.Done {
-			incompleted = append(incompleted, task)
-		}
-	}
-
-	return incompleted
 }
