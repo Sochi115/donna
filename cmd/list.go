@@ -4,6 +4,7 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -27,11 +28,18 @@ var listCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(0),
 	Long: `Lists tasks that have not been deleted using the 'delete' command.
   By default, 'list' will list ALL currently existing tasks.`,
+
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) > 0 {
 			cmd.Help()
 		} else {
 			tasks := fetchTasksAsList()
+
+			if len(tasks) == 0 {
+				fmt.Println("Congratulations! There are no tasks to do")
+				return
+			}
+
 			processTasks(tasks)
 
 			if all {

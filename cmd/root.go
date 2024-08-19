@@ -6,24 +6,20 @@ package cmd
 import (
 	"encoding/csv"
 	"os"
+	"path"
 	"strconv"
 
 	"github.com/gocarina/gocsv"
 	"github.com/spf13/cobra"
 )
 
-var csvPath string = "todo.csv"
-
 var rootCmd = &cobra.Command{
 	Use:   "donna",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "A simple CLI Todo list",
+	Long:  `Keeps track of your tasks like Donna so that you can perform as efficiently as Harvey`,
 }
+
+var csvFileName string = "donna.csv"
 
 func Execute() {
 	err := rootCmd.Execute()
@@ -37,23 +33,21 @@ func init() {
 }
 
 func fetchTasksAsList() []Task {
-	file, err := os.Open(csvPath)
+	file, err := os.Open(getCsvPath())
 	if err != nil {
-		panic(err)
+		os.Create(getCsvPath())
 	}
 
 	defer file.Close()
 
 	var tasks []Task
 
-	reader := csv.NewReader(file)
-	reader.FieldsPerRecord = -1
-	data, err := reader.ReadAll()
+	rows, err := readCsvIgnoreHeaders(file)
 	if err != nil {
-		panic(err)
+		return tasks
 	}
 
-	for _, row := range data[1:] {
+	for _, row := range rows {
 
 		id, err := strconv.Atoi(row[0])
 		if err != nil {
@@ -72,7 +66,7 @@ func fetchTasksAsList() []Task {
 }
 
 func fetchTasksAsMap() map[int]Task {
-	file, err := os.Open(csvPath)
+	file, err := os.Open(getCsvPath())
 	if err != nil {
 		panic(err)
 	}
@@ -81,14 +75,12 @@ func fetchTasksAsMap() map[int]Task {
 
 	m := make(map[int]Task)
 
-	reader := csv.NewReader(file)
-	reader.FieldsPerRecord = -1
-	data, err := reader.ReadAll()
+	rows, err := readCsvIgnoreHeaders(file)
 	if err != nil {
-		panic(err)
+		return m
 	}
 
-	for _, row := range data[1:] {
+	for _, row := range rows {
 
 		id, err := strconv.Atoi(row[0])
 		if err != nil {
@@ -106,8 +98,27 @@ func fetchTasksAsMap() map[int]Task {
 	return m
 }
 
+func readCsvIgnoreHeaders(file *os.File) ([][]string, error) {
+	reader := csv.NewReader(file)
+	reader.FieldsPerRecord = -1
+	data, err := reader.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+
+	if len(data) == 0 {
+		return data, nil
+	}
+
+	return data[1:], nil
+}
+
 func writeTasksToCsv(tasks []Task) {
-	csv_file, err := os.OpenFile(csvPath, os.O_RDWR|os.O_TRUNC|os.O_CREATE, 0755)
+	csv_file, err := os.OpenFile(
+		getCsvPath(),
+		os.O_RDWR|os.O_TRUNC|os.O_CREATE,
+		0755,
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -127,4 +138,9 @@ func writeTasksToCsv(tasks []Task) {
 	if err := gocsv.MarshalFile(&tasks, csv_file); err != nil {
 		panic(err)
 	}
+}
+
+func getCsvPath() string {
+	homedir, _ := os.UserHomeDir()
+	return path.Join(homedir, csvFileName)
 }
