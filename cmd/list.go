@@ -23,9 +23,10 @@ var (
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "Lists existing tasks",
-	Args:  cobra.ExactArgs(0),
+	Use:     "list",
+	Aliases: []string{"ls"},
+	Short:   "Lists existing tasks",
+	Args:    cobra.ExactArgs(0),
 	Long: `Lists tasks that have not been deleted using the 'delete' command.
   By default, 'list' will list ALL currently existing tasks.`,
 
