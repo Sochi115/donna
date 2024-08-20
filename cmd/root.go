@@ -7,6 +7,7 @@ import (
 	"encoding/csv"
 	"os"
 	"path"
+	"sort"
 	"strconv"
 
 	"github.com/gocarina/gocsv"
@@ -132,6 +133,10 @@ func writeTasksToCsv(tasks []Task) {
 	if err != nil {
 		panic(err)
 	}
+
+	sort.Slice(tasks, func(i, j int) bool {
+		return tasks[i].Id < tasks[j].Id
+	})
 
 	defer csv_file.Close()
 
