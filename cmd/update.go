@@ -14,8 +14,9 @@ var descFlag string
 
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
-	Use:   "update [ID]",
-	Short: "Updates a task data",
+	Use:     "update [ID]",
+	Short:   "Updates a task data",
+	Aliases: []string{"u"},
 	Long: `  Updates the data the task with the given [ID] 
   If no commands are passed, the description is updated by default.`,
 	Args:                  cobra.MinimumNArgs(1),
