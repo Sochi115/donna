@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -57,4 +58,9 @@ func appendNewTask(description string) []Task {
 	tasks = append(tasks, newTask)
 
 	return tasks
+}
+
+func generateCurrDateString() string {
+	currTime := time.Now()
+	return fmt.Sprintf("%d-%s-%d", currTime.Day(), currTime.Month().String(), currTime.Year())
 }

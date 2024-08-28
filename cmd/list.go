@@ -16,9 +16,6 @@ var (
 	completed   bool
 	incompleted bool
 	stats       bool
-
-	completedTasks   []Task
-	incompletedTasks []Task
 )
 
 // listCmd represents the list command
@@ -41,20 +38,18 @@ var listCmd = &cobra.Command{
 				return
 			}
 
-			processTasks(tasks)
-
 			if all {
 				createTable(tasks)
 				return
 			}
 
 			if completed {
-				createTable(completedTasks)
+				createTable(getCompletedTasks(tasks))
 				return
 			}
 
 			if incompleted {
-				createTable(incompletedTasks)
+				createTable(getIncompletedTasks(tasks))
 				return
 			}
 
@@ -93,14 +88,4 @@ func createTable(tasks []Task) {
 	}
 
 	t.Render()
-}
-
-func processTasks(tasks []Task) {
-	for _, task := range tasks {
-		if task.Done {
-			completedTasks = append(completedTasks, task)
-		} else {
-			incompletedTasks = append(incompletedTasks, task)
-		}
-	}
 }

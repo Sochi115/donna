@@ -7,13 +7,9 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/spf13/cobra"
 )
-
-// TODO
-// Clean the run function
 
 var deleteCmd = &cobra.Command{
 	Use:   "delete [ID]",
@@ -24,34 +20,16 @@ var deleteCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			if cmd.Flags().Lookup("all").Changed {
-				fmt.Print("Do you want to delete ALL tasks? [y/n]: ")
-				var confirmation string
-				fmt.Scanln(&confirmation)
-
-				if strings.EqualFold(confirmation, "y") {
-					writeTasksToCsv(make([]Task, 0))
-					fmt.Println("Successfully deleted all tasks")
-					return
-				}
-				fmt.Println("Cancelled task")
+				deleteAllTasks()
 				return
 			}
 
 			if cmd.Flags().Lookup("completed").Changed {
-				fmt.Print("Do you want to delete all completed tasks? [y/n]: ")
-				var confirmation string
-				fmt.Scanln(&confirmation)
-
-				if strings.EqualFold(confirmation, "y") {
-					processTasks(fetchTasksAsList())
-					writeTasksToCsv(incompletedTasks)
-					fmt.Println("Successfully deleted all completed tasks")
-					return
-				}
-				fmt.Println("Cancelled task")
+				saveIncompletedTasks()
 				return
-
 			}
+
+			cmd.Help()
 		} else {
 			id, err := strconv.Atoi(args[0])
 			if err != nil {
@@ -59,7 +37,7 @@ var deleteCmd = &cobra.Command{
 				cmd.Help()
 				return
 			}
-			deleteTask(id)
+			deleteTaskById(id)
 		}
 	},
 }
@@ -73,7 +51,7 @@ func init() {
 	deleteCmd.Flags().BoolVarP(&completed, "completed", "c", false, "delete all completed tasks")
 }
 
-func deleteTask(id int) {
+func deleteTaskById(id int) {
 	tasksMap := fetchTasksAsMap()
 
 	_, ok := tasksMap[id]
@@ -96,8 +74,29 @@ func deleteTask(id int) {
 	fmt.Printf("Successfully deleted task %d", id)
 }
 
-func generateCurrDateString() string {
-	currTime := time.Now()
+func deleteAllTasks() {
+	fmt.Print("Do you want to delete ALL tasks? [y/n]: ")
+	var confirmation string
+	fmt.Scanln(&confirmation)
 
-	return fmt.Sprintf("%d-%s-%d", currTime.Day(), currTime.Month().String(), currTime.Year())
+	if strings.EqualFold(confirmation, "y") {
+		writeTasksToCsv(make([]Task, 0))
+		fmt.Println("Successfully deleted all tasks")
+		return
+	}
+	fmt.Println("Cancelled task")
+}
+
+func saveIncompletedTasks() {
+	fmt.Print("Do you want to delete all completed tasks? [y/n]: ")
+	var confirmation string
+	fmt.Scanln(&confirmation)
+
+	if strings.EqualFold(confirmation, "y") {
+		incompletedTasks := getIncompletedTasks(fetchTasksAsList())
+		writeTasksToCsv(incompletedTasks)
+		fmt.Println("Successfully deleted all completed tasks")
+		return
+	}
+	fmt.Println("Cancelled task")
 }
