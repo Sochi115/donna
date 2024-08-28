@@ -12,6 +12,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// TODO
+// Clean the run function
+
 var deleteCmd = &cobra.Command{
 	Use:   "delete [ID]",
 	Short: "Deletes task",
