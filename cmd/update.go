@@ -46,7 +46,7 @@ var updateCmd = &cobra.Command{
 		}
 
 		taskMap[id] = task
-		tasksList := make([]Task, 0, len(taskMap))
+		tasksList := make([]*Task, 0, len(taskMap))
 
 		for _, tasks := range taskMap {
 			tasksList = append(tasksList, tasks)

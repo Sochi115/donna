@@ -63,7 +63,7 @@ func deleteTaskById(id int) {
 
 	delete(tasksMap, id)
 
-	tasksList := make([]Task, 0, len(tasksMap))
+	tasksList := make([]*Task, 0, len(tasksMap))
 
 	for _, tasks := range tasksMap {
 		tasksList = append(tasksList, tasks)
@@ -80,7 +80,7 @@ func deleteAllTasks() {
 	fmt.Scanln(&confirmation)
 
 	if strings.EqualFold(confirmation, "y") {
-		writeTasksToCsv(make([]Task, 0))
+		writeTasksToCsv(make([]*Task, 0))
 		fmt.Println("Successfully deleted all tasks")
 		return
 	}

@@ -32,7 +32,7 @@ func Execute() {
 func init() {
 }
 
-func fetchTasksAsList() []Task {
+func fetchTasksAsList() []*Task {
 	file, err := os.Open(getCsvPath())
 	if err != nil {
 		os.Create(getCsvPath())
@@ -40,7 +40,7 @@ func fetchTasksAsList() []Task {
 
 	defer file.Close()
 
-	var tasks []Task
+	var tasks []*Task
 
 	rows, err := readCsvIgnoreHeaders(file)
 	if err != nil {
@@ -59,13 +59,13 @@ func fetchTasksAsList() []Task {
 			panic(err)
 		}
 
-		tasks = append(tasks, Task{id, row[1], row[2], completed})
+		tasks = append(tasks, &Task{id, row[1], row[2], completed})
 	}
 
 	return tasks
 }
 
-func fetchTasksAsMap() map[int]Task {
+func fetchTasksAsMap() map[int]*Task {
 	file, err := os.Open(getCsvPath())
 	if err != nil {
 		panic(err)
@@ -73,7 +73,7 @@ func fetchTasksAsMap() map[int]Task {
 
 	defer file.Close()
 
-	m := make(map[int]Task)
+	m := make(map[int]*Task)
 
 	rows, err := readCsvIgnoreHeaders(file)
 	if err != nil {
@@ -92,7 +92,7 @@ func fetchTasksAsMap() map[int]Task {
 			panic(err)
 		}
 
-		m[id] = Task{id, row[1], row[2], completed}
+		m[id] = &Task{id, row[1], row[2], completed}
 	}
 
 	return m
@@ -113,7 +113,7 @@ func readCsvIgnoreHeaders(file *os.File) ([][]string, error) {
 	return data[1:], nil
 }
 
-func writeTasksToCsv(tasks []Task) {
+func writeTasksToCsv(tasks []*Task) {
 	csv_file, err := os.OpenFile(
 		getCsvPath(),
 		os.O_RDWR|os.O_TRUNC|os.O_CREATE,

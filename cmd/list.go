@@ -66,7 +66,7 @@ func init() {
 	listCmd.Flags().BoolVarP(&stats, "stats", "s", false, "append statistics to footer of table")
 }
 
-func createTable(tasks []Task) {
+func createTable(tasks []*Task) {
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
 	t.SetStyle(table.StyleRounded)

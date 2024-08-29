@@ -51,7 +51,7 @@ func setTaskComplete(id int) {
 
 	tasksMap[id] = completedTask
 
-	tasksList := make([]Task, 0, len(tasksMap))
+	tasksList := make([]*Task, 0, len(tasksMap))
 
 	for _, tasks := range tasksMap {
 		tasksList = append(tasksList, tasks)

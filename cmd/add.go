@@ -38,7 +38,7 @@ func addTask(desc string) {
 	fmt.Printf("Successfully added new task '%s'", desc)
 }
 
-func appendNewTask(description string) []Task {
+func appendNewTask(description string) []*Task {
 	tasks := fetchTasksAsList()
 
 	var newId int
@@ -55,7 +55,7 @@ func appendNewTask(description string) []Task {
 		false,
 	}
 
-	tasks = append(tasks, newTask)
+	tasks = append(tasks, &newTask)
 
 	return tasks
 }
